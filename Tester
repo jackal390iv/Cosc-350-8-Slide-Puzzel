@@ -1,0 +1,11 @@
+
+public class Tester {
+	public static void main(String[] args) {
+		Puzzel puzzel = new Puzzel();
+		
+                //puzzel.startEndState();
+
+                puzzel.testing();
+                
+	}
+}
