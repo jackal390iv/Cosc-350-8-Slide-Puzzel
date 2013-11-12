@@ -16,7 +16,7 @@ public class Puzzel {
     char v7 = '7';
     char v8 = '8';
     char v_ = '_';
-    Node startState = new Node(v8, v7, v6, v5, v4, v3, v2, v1, v_, null, 0, base, 0);
+    Node startState = new Node(v7, v8, v6, v5, v_, v3, v2, v4, v1, null, 0, base, 0);
     Node endState = new Node(v1, v2, v3, v4, v5, v6, v7, v8, v_, null, 0, base, 0);
 
     public Puzzel() {
@@ -85,9 +85,7 @@ public class Puzzel {
 
         System.out.println("Thank you.");
 
-        int blank = blankLocation(startState);
-
-        solver(startState, blankLocation(startState));
+        solver(startState, startState.getblankLoc());
 
     }
 
@@ -115,50 +113,11 @@ public class Puzzel {
     }
 
     /**
-     * returns the location of the blank space
-     * @param currentState
-     * @return 
-     */
-    public int blankLocation(Node currentState) {
-
-        int location = 11;
-
-        if (currentState.state[0][1] == v_) {
-            location = 12;
-        } else if (currentState.state[0][2] == v_) {
-            location = 13;
-        } //-----------------------------------------------
-        else if (currentState.state[1][0] == v_) {
-            location = 21;
-        } else if (currentState.state[1][1] == v_) {
-            location = 22;
-        } else if (currentState.state[1][2] == v_) {
-            location = 23;
-        } //-----------------------------------------------
-        else if (currentState.state[2][0] == v_) {
-            location = 31;
-        } else if (currentState.state[2][1] == v_) {
-            location = 32;
-        } else if (currentState.state[2][2] == v_) {
-            location = 33;
-        }
-        return location;
-    }
-
-    /**
-     * a tester method I used for short hand testing
-     */
-    public void testing() {
-        solver(startState, blankLocation(startState));
-
-    }
-
-    /**
      * checks to see if the current node is equivalent to the end state that the user specified
      * @param currentState
      * @return 
      */
-    public boolean checker(Node currentState) {
+    public boolean endChecker(Node currentState) {
         boolean checker = false;
         if ((currentState.state[0][0] != endState.state[0][0]) || (currentState.state[0][1] != endState.state[0][1]) || (currentState.state[0][2] != endState.state[0][2])
                 || (currentState.state[1][0] != endState.state[1][0]) || (currentState.state[1][1] != endState.state[1][1]) || (currentState.state[1][2] != endState.state[1][2])
@@ -169,19 +128,7 @@ public class Puzzel {
     }
 
     /**
-     * This method would return the direct and varbos answers to the puzzel problem
-     */
-    public void endGame(Node currentState) {
-        System.out.println("How The Puzzel can be solved in the fewest moves, from solution to starting point: ");
-        startChecker(currentState);
-        System.out.println("However Walking through our search varbosly we get: ");
-        do {
-            theTree.remove(0).printNode();
-        } while (!(theTree.isEmpty()));
-    }
-
-    /**
-     * this method would print the fastest search solution from endpoint to startpoint
+     * checks to see if the current node is equivalent to the start state that the user specified 
      * @param currentState 
      */
     public void startChecker(Node currentState) {
@@ -194,364 +141,116 @@ public class Puzzel {
     }
 
     /**
-     * THE PROBLEM: somewhere the logic in this method is whats throwing my entire code off... 
-     * depending on the children each node had upon completing its possible moves, the depthcounter would run another search on each of those children 
-     * getting them from the arraylist
-     * @param currentState
-     * @param children 
+     * a tester method I used for short hand testing
      */
-    public void depthCounter(Node currentState, int children) {
+    public void testing() {
 
-        //System.out.println("DEPTH COUNTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
-
-        for (int i = (theTree.size() - children); i != (theTree.size() + (children - 2)); i++) {
-            //System.out.println("depth: " + i);
-            solver(theTree.get(i), blankLocation(theTree.get(i)));
-        }
+        solver(startState, startState.getblankLoc());
     }
 
-    /**
-     * This class should have recursivly created the parent to children tree(thrown them into an arraylist that could be assed after completion to the search)
-     * However due to some unknown error (perhaps memory?) that I could not find, this code can create children for any blank location and throw then in the 
-     * arraylist 'theTree'
-     * @param currentState
-     * @param blank 
-     */
     public void solver(Node currentState, int blank) {
 
-        //System.out.println("NEW LOOP: ");
+        System.out.println("NEW LOOP: ");
+        currentState.printNode();
 
-        if (checker(currentState) == true) {
+        if (endChecker(currentState) == true) {
             Node temp = new Node(currentState.state[0][0], currentState.state[0][1],
                     currentState.state[0][2], currentState.state[1][0], currentState.state[1][1],
                     currentState.state[1][2], currentState.state[2][0], currentState.state[2][1],
                     currentState.state[2][2], currentState, currentState.getDepth() + 1, base, 0);
 
-            //Corners-------------------------------------------------------------------------------------------------------------
-            //
-            //top left corner
-            if (blank == 11) {
+            if ((currentState.getChildren() == 2) && (((currentState.theUpEX() == false) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == false))
+                    || ((currentState.theUpEX() == false) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == false) && (currentState.theRightEX() == true))
+                    || ((currentState.theUpEX() == true) && (currentState.theDownEX() == false) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == false))
+                    || ((currentState.theUpEX() == true) && (currentState.theDownEX() == false) && (currentState.theLeftEX() == false) && (currentState.theRightEX() == true)))) {
+                System.out.println("2 children");
 
-                //System.out.println("Top Left Corner");
-                currentState.printNode();
+            } else if ((currentState.getChildren() == 3) && (((currentState.theUpEX() == false) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == true))
+                    || ((currentState.theUpEX() == true) && (currentState.theDownEX() == false) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == true))
+                    || ((currentState.theUpEX() == true) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == false) && (currentState.theRightEX() == true))
+                    || ((currentState.theUpEX() == true) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == false)))) {
+                System.out.println("3 children");
+            } else if ((currentState.getChildren() == 4) && (((currentState.theUpEX() == true) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == true)))) {
+                System.out.println("4 children");
 
-                if (currentState.getChildren() == 2) {
-                    depthCounter(currentState, 2);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("R");
-                    temp.state[0][0] = currentState.state[0][1];
-                    temp.state[0][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("D");
-                    temp.state[0][0] = currentState.state[1][0];
-                    temp.state[1][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Top Left Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-
-            } //
-            //top right corner
-            else if (blank == 13) {
-
-                //System.out.println("Top Right Corner ");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 2) {
-                    depthCounter(currentState, 2);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("L");
-                    temp.state[0][2] = currentState.state[0][1];
-                    temp.state[0][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("D");
-                    temp.state[0][2] = currentState.state[1][2];
-                    temp.state[1][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Top Right Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            }// 
-            //bottom left corner
-            else if (blank == 31) {
-
-                //System.out.println("Bottom Left Corner");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 2) {
-                    depthCounter(currentState, 2);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("R");
-                    temp.state[2][0] = currentState.state[2][1];
-                    temp.state[2][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("U");
-                    temp.state[2][0] = currentState.state[1][0];
-                    temp.state[1][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Bottom Left Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            }// 
-            //bottom right corner
-            else if (blank == 33) {
-
-                //System.out.println("Bottom Right Corner");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 2) {
-                    depthCounter(currentState, 2);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("L");
-                    temp.state[2][2] = currentState.state[2][1];
-                    temp.state[2][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("U");
-                    temp.state[2][2] = currentState.state[1][2];
-                    temp.state[1][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Bottom Right Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            } //Sides-------------------------------------------------------------------------------------------------------------
-            //
-            // left side
-            else if (blank == 21) {
-
-                //System.out.println("Left Side");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 3) {
-                    depthCounter(currentState, 3);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("U");
-                    temp.state[1][0] = currentState.state[0][0];
-                    temp.state[0][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("D");
-                    temp.state[1][0] = currentState.state[2][0];
-                    temp.state[2][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 2) {
-                    temp.setMove("R");
-                    temp.state[1][0] = currentState.state[1][1];
-                    temp.state[1][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Left Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            } //
-            // right side
-            else if (blank == 23) {
-
-                //System.out.println("Right Side");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 3) {
-                    depthCounter(currentState, 3);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("U");
-                    temp.state[1][2] = currentState.state[0][2];
-                    temp.state[0][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("D");
-                    temp.state[1][2] = currentState.state[2][2];
-                    temp.state[2][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 2) {
-                    temp.setMove("L");
-                    temp.state[1][2] = currentState.state[1][1];
-                    temp.state[1][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Right Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            }//
-            // top side
-            else if (blank == 12) {
-
-                //System.out.println("Top Side");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 3) {
-                    depthCounter(currentState, 3);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("D");
-                    temp.state[0][1] = currentState.state[1][1];
-                    temp.state[1][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("L");
-                    temp.state[0][1] = currentState.state[0][0];
-                    temp.state[0][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 2) {
-                    temp.setMove("R");
-                    temp.state[0][1] = currentState.state[0][2];
-                    temp.state[0][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Top Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            } //
-            // bottom side
-            else if (blank == 32) {
-
-                //System.out.println("Bottom Side");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 3) {
-                    depthCounter(currentState, 3);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("U");
-                    temp.state[2][1] = currentState.state[1][1];
-                    temp.state[1][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("L");
-                    temp.state[2][1] = currentState.state[2][0];
-                    temp.state[2][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 2) {
-                    temp.setMove("R");
-                    temp.state[2][1] = currentState.state[2][2];
-                    temp.state[2][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Bottom Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-            } //Center-------------------------------------------------------------------------------------------------------------
-            else if (blank == 22) {
-
-                //System.out.println("Center");
-                currentState.printNode();
-
-                if (currentState.getChildren() == 4) {
-                    depthCounter(currentState, 4);
-                } else if (currentState.getChildren() == 0) {
-                    temp.setMove("U");
-                    temp.state[1][1] = currentState.state[0][1];
-                    temp.state[0][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 1) {
-                    temp.setMove("D");
-                    temp.state[1][1] = currentState.state[2][1];
-                    temp.state[2][1] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 2) {
-                    temp.setMove("L");
-                    temp.state[1][1] = currentState.state[1][0];
-                    temp.state[1][0] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else if (currentState.getChildren() == 3) {
-                    temp.setMove("R");
-                    temp.state[1][1] = currentState.state[1][2];
-                    temp.state[1][2] = v_;
-                    theTree.add(temp);
-                    currentState.addChild();
-                    temp.printNode();
-                    solver(currentState, blankLocation(currentState));
-                } else {
-                    System.out.println("Center NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                }
-
-            } //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //something went wrong
-            else {
+            } else if ((currentState.theUpEX()) && (currentState.getChildren() == 0)) {
+                int originalv = startState.getblankLoc();
+                int modv = originalv % 10;
+                int secondv = modv - 1;
+                int firstv = ((originalv - modv) - 10) / 10;
+                temp.setMove("U");
+                temp.state[firstv][secondv] = currentState.state[firstv - 1][secondv];
+                temp.state[firstv - 1][secondv] = v_;
+                temp.childNumChange(currentState.getChildren() + 1);
+                theTree.add(temp);
+                currentState.addChild();
+                temp.printNode();
+                solver(currentState, currentState.getblankLoc());
+            } else if ((currentState.theDownEX()) && ((currentState.getChildren() == 0)
+                    || ((currentState.getChildren() == 1) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("D")) && (theTree.get(theTree.size() - 1).getParent() == currentState)))))) {
+                int originalv = startState.getblankLoc();
+                int modv = originalv % 10;
+                int secondv = modv - 1;
+                int firstv = ((originalv - modv) - 10) / 10;
+                temp.setMove("D");
+                temp.state[firstv][secondv] = currentState.state[firstv + 1][secondv];
+                temp.state[firstv + 1][secondv] = v_;
+                temp.childNumChange(currentState.getChildren() + 1);
+                theTree.add(temp);
+                currentState.addChild();
+                temp.printNode();
+                solver(currentState, currentState.getblankLoc());
+            } else if ((currentState.theLeftEX()) && ((currentState.getChildren() == 0)
+                    || ((currentState.getChildren() == 1) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("L")) && (theTree.get(theTree.size() - 1).getParent() == currentState))))
+                    || ((currentState.getChildren() == 2) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("L")) && (theTree.get(theTree.size() - 1).getParent() == currentState)))))) {
+                int originalv = startState.getblankLoc();
+                int modv = originalv % 10;
+                int secondv = modv - 1;
+                int firstv = ((originalv - modv) - 10) / 10;
+                temp.setMove("L");
+                temp.state[firstv][secondv] = currentState.state[firstv][secondv - 1];
+                temp.state[firstv][secondv - 1] = v_;
+                temp.childNumChange(currentState.getChildren() + 1);
+                theTree.add(temp);
+                currentState.addChild();
+                temp.printNode();
+                solver(currentState, currentState.getblankLoc());
+            } else if ((currentState.theRightEX()) && ((currentState.getChildren() == 0)
+                    || ((currentState.getChildren() == 1) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("R")) && (theTree.get(theTree.size() - 1).getParent() == currentState))))
+                    || ((currentState.getChildren() == 2) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("R")) && (theTree.get(theTree.size() - 1).getParent() == currentState))))
+                    || ((currentState.getChildren() == 3) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("R")) && (theTree.get(theTree.size() - 1).getParent() == currentState)))))) {
+                int originalv = startState.getblankLoc();
+                int modv = originalv % 10;
+                int secondv = modv - 1;
+                int firstv = ((originalv - modv) - 10) / 10;
+                temp.setMove("R");
+                temp.state[firstv][secondv] = currentState.state[firstv][secondv + 1];
+                temp.state[firstv][secondv + 1] = v_;
+                temp.childNumChange(currentState.getChildren() + 1);
+                theTree.add(temp);
+                currentState.addChild();
+                temp.printNode();
+                solver(currentState, currentState.getblankLoc());
+            } else {
                 System.out.println("NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             }
-        } //System.out.println("Wrong");
-        else {
 
-            endGame(currentState);
-            //System.out.println("Right");
-            //currentState.printNode();
-            //endState.printNode();
+        } else {
+
+            //endGame(currentState);
+            System.out.println("Right%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            currentState.printNode();
+            endState.printNode();
 
         }
-        //System.out.println("End");
+    }
+
+    public void endGame(Node currentState) {
+        System.out.println("How The Puzzel can be solved in the fewest moves, from solution to starting point: ");
+        startChecker(currentState);
+        System.out.println("However Walking through our search varbosly we get: ");
+        do {
+            theTree.remove(0).printNode();
+        } while (!(theTree.isEmpty()));
     }
 }
