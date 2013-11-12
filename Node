@@ -1,0 +1,130 @@
+public class Node {
+
+	char[][] state = new char[3][3];
+	int depth;
+	Node parent;
+	String move;
+        int children;
+        
+        /**
+         * creates the node
+         * @param row1col1
+         * @param row1col2
+         * @param row1col3
+         * @param row2col1
+         * @param row2col2
+         * @param row2col3
+         * @param row3col1
+         * @param row3col2
+         * @param row3col3
+         * @param p
+         * @param d
+         * @param m
+         * @param ch 
+         */
+	public Node(char row1col1, char row1col2, char row1col3, char row2col1,
+			char row2col2, char row2col3, char row3col1, char row3col2,
+			char row3col3, Node p, int d, String m,int ch) {
+		
+		state[0][0]=row1col1;
+		state[0][1]=row1col2;
+		state[0][2]=row1col3;
+		
+		state[1][0]=row2col1;
+		state[1][1]=row2col2;
+		state[1][2]=row2col3;
+
+		state[2][0]=row3col1;
+		state[2][1]=row3col2;
+		state[2][2]=row3col3;
+
+		parent=p;
+		depth=d;
+		move=m;
+                children=ch;
+	}
+        
+        /**
+         * sets the parent node
+         * @param p 
+         */
+        public void setParent(Node p){
+            parent=p;
+        }
+        
+        /**
+         * returns the number of children
+         * @return 
+         */
+        public int getChildren(){
+            return children;
+        }
+        
+        /**
+         * increments children
+         */
+        public void addChild(){
+            children++;
+        }
+        
+        /**
+         * returns the move string
+         * @return 
+         */
+        public String getMove(){
+            return move;
+        }
+        
+        /**
+         * returns the parent node 
+         * @return 
+         */
+        public Node getParent(){
+            return parent;
+        }
+        
+        /**
+         * adds to the node string 
+         * @param d 
+         */
+        public void setMove(String d){
+            move= move+d;
+        }
+        
+        /**
+         * returns the depth
+         * @return 
+         */
+        public int getDepth(){
+            return depth;
+        }
+        
+        /**
+         * increments the depth
+         */
+        public void incrementDepth(){
+            depth++;
+        }
+        
+        /**
+         * prints a representation of the node, its depth, and its moves
+         */
+	public void printNode(){
+		System.out.println("\n"+"-------------------------"+"\n");
+                System.out.print(state[0][0]);
+                System.out.print(state[0][1]);
+                System.out.print((state[0][2])+"\n");           
+                System.out.print(state[1][0]);
+                System.out.print(state[1][1]);
+                System.out.print((state[1][2])+"\n");
+                System.out.print(state[2][0]);
+                System.out.print(state[2][1]);
+                System.out.print(state[2][2]);
+                System.out.println("\n");
+                
+                
+		System.out.println("Node Depth: "+depth);
+		System.out.println("Node Moves: "+move);
+                System.out.println("-------------------------"+"\n");
+	}
+}
