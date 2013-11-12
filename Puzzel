@@ -1,0 +1,557 @@
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Puzzel {
+
+    int childrens = 0;
+    ArrayList<Node> theTree = new ArrayList<Node>();
+    String base = "";
+    char v1 = '1';
+    char v2 = '2';
+    char v3 = '3';
+    char v4 = '4';
+    char v5 = '5';
+    char v6 = '6';
+    char v7 = '7';
+    char v8 = '8';
+    char v_ = '_';
+    Node startState = new Node(v8, v7, v6, v5, v4, v3, v2, v1, v_, null, 0, base, 0);
+    Node endState = new Node(v1, v2, v3, v4, v5, v6, v7, v8, v_, null, 0, base, 0);
+
+    public Puzzel() {
+    }
+
+    /**
+     * asks user for a start state and an end state and creates those nodes
+     */
+    public void startEndState() {
+
+        boolean valid = false;
+        Scanner input = new Scanner(System.in);
+        String state;
+        System.out.println("Welcome, please enter a combination of the following characters as a start state for your puzzel;"
+                + "\n"
+                + "1,2,3,4,5,6,7,8, and _ (as your blank space): ");
+        do {
+            state = input.nextLine();
+            state.replaceAll(",", "");
+            state.replaceAll(" ", "");
+            state.toLowerCase();
+
+            valid = validate(state);
+
+            if (valid == false) {
+                System.out.println("I am sorry, but the start state you have entered is invalid, please try again: ");
+            }
+
+        } while (valid == false);
+
+
+        Node temp1 = new Node(state.charAt(0), state.charAt(1),
+                state.charAt(2), state.charAt(3), state.charAt(4),
+                state.charAt(5), state.charAt(6), state.charAt(7),
+                state.charAt(8), null, 0, base, 0);
+
+        startState = temp1;
+
+        //startState.printNode();
+
+        valid = false;
+        System.out.println("Thank you, now please enter an end state for your puzzel;"
+                + "\n"
+                + "using any combination of the the characters you used for your start state: ");
+        do {
+            state = input.nextLine();
+            state.replaceAll(",", "");
+            state.replaceAll(" ", "");
+            state.toLowerCase();
+
+            valid = validate(state);
+
+            if (valid == false) {
+                System.out.println("I am sorry, but the end state you have entered is invalid, please try again: ");
+            }
+
+        } while (valid = false);
+
+        Node temp2 = new Node(state.charAt(0), state.charAt(1),
+                state.charAt(2), state.charAt(3), state.charAt(4),
+                state.charAt(5), state.charAt(6), state.charAt(7),
+                state.charAt(8), null, 0, base, 0);
+        endState = temp2;
+
+        //endState.printNode();
+
+        System.out.println("Thank you.");
+
+        int blank = blankLocation(startState);
+
+        solver(startState, blankLocation(startState));
+
+    }
+
+    /**
+     * checks to see if user input is valid
+     * @param state
+     * @return 
+     */
+    private boolean validate(String state) {
+
+        boolean valid = false;
+        if (state.length() == 9) {
+            if (((state.indexOf("1")) != -1) && ((state.indexOf("2")) != -1)
+                    && ((state.indexOf("3")) != -1)
+                    && ((state.indexOf("4")) != -1)
+                    && ((state.indexOf("5")) != -1)
+                    && ((state.indexOf("6")) != -1)
+                    && ((state.indexOf("7")) != -1)
+                    && ((state.indexOf("8")) != -1)
+                    && ((state.indexOf("_")) != -1)) {
+                valid = true;
+            }
+        }
+        return valid;
+    }
+
+    /**
+     * returns the location of the blank space
+     * @param currentState
+     * @return 
+     */
+    public int blankLocation(Node currentState) {
+
+        int location = 11;
+
+        if (currentState.state[0][1] == v_) {
+            location = 12;
+        } else if (currentState.state[0][2] == v_) {
+            location = 13;
+        } //-----------------------------------------------
+        else if (currentState.state[1][0] == v_) {
+            location = 21;
+        } else if (currentState.state[1][1] == v_) {
+            location = 22;
+        } else if (currentState.state[1][2] == v_) {
+            location = 23;
+        } //-----------------------------------------------
+        else if (currentState.state[2][0] == v_) {
+            location = 31;
+        } else if (currentState.state[2][1] == v_) {
+            location = 32;
+        } else if (currentState.state[2][2] == v_) {
+            location = 33;
+        }
+        return location;
+    }
+
+    /**
+     * a tester method I used for short hand testing
+     */
+    public void testing() {
+        solver(startState, blankLocation(startState));
+
+    }
+
+    /**
+     * checks to see if the current node is equivalent to the end state that the user specified
+     * @param currentState
+     * @return 
+     */
+    public boolean checker(Node currentState) {
+        boolean checker = false;
+        if ((currentState.state[0][0] != endState.state[0][0]) || (currentState.state[0][1] != endState.state[0][1]) || (currentState.state[0][2] != endState.state[0][2])
+                || (currentState.state[1][0] != endState.state[1][0]) || (currentState.state[1][1] != endState.state[1][1]) || (currentState.state[1][2] != endState.state[1][2])
+                || (currentState.state[2][0] != endState.state[2][0]) || (currentState.state[2][1] != endState.state[2][1]) || (currentState.state[2][2] != endState.state[2][2])) {
+            checker = true;
+        }
+        return checker;
+    }
+
+    /**
+     * This method would return the direct and varbos answers to the puzzel problem
+     */
+    public void endGame(Node currentState) {
+        System.out.println("How The Puzzel can be solved in the fewest moves, from solution to starting point: ");
+        startChecker(currentState);
+        System.out.println("However Walking through our search varbosly we get: ");
+        do {
+            theTree.remove(0).printNode();
+        } while (!(theTree.isEmpty()));
+    }
+
+    /**
+     * this method would print the fastest search solution from endpoint to startpoint
+     * @param currentState 
+     */
+    public void startChecker(Node currentState) {
+        currentState.printNode();
+        if ((currentState.state[0][0] != startState.state[0][0]) || (currentState.state[0][1] != startState.state[0][1]) || (currentState.state[0][2] != startState.state[0][2])
+                || (currentState.state[1][0] != startState.state[1][0]) || (currentState.state[1][1] != startState.state[1][1]) || (currentState.state[1][2] != startState.state[1][2])
+                || (currentState.state[2][0] != startState.state[2][0]) || (currentState.state[2][1] != startState.state[2][1]) || (currentState.state[2][2] != startState.state[2][2])) {
+            startChecker(currentState.getParent());
+        }
+    }
+
+    /**
+     * THE PROBLEM: somewhere the logic in this method is whats throwing my entire code off... 
+     * depending on the children each node had upon completing its possible moves, the depthcounter would run another search on each of those children 
+     * getting them from the arraylist
+     * @param currentState
+     * @param children 
+     */
+    public void depthCounter(Node currentState, int children) {
+
+        //System.out.println("DEPTH COUNTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+
+        for (int i = (theTree.size() - children); i != (theTree.size() + (children - 2)); i++) {
+            //System.out.println("depth: " + i);
+            solver(theTree.get(i), blankLocation(theTree.get(i)));
+        }
+    }
+
+    /**
+     * This class should have recursivly created the parent to children tree(thrown them into an arraylist that could be assed after completion to the search)
+     * However due to some unknown error (perhaps memory?) that I could not find, this code can create children for any blank location and throw then in the 
+     * arraylist 'theTree'
+     * @param currentState
+     * @param blank 
+     */
+    public void solver(Node currentState, int blank) {
+
+        //System.out.println("NEW LOOP: ");
+
+        if (checker(currentState) == true) {
+            Node temp = new Node(currentState.state[0][0], currentState.state[0][1],
+                    currentState.state[0][2], currentState.state[1][0], currentState.state[1][1],
+                    currentState.state[1][2], currentState.state[2][0], currentState.state[2][1],
+                    currentState.state[2][2], currentState, currentState.getDepth() + 1, base, 0);
+
+            //Corners-------------------------------------------------------------------------------------------------------------
+            //
+            //top left corner
+            if (blank == 11) {
+
+                //System.out.println("Top Left Corner");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 2) {
+                    depthCounter(currentState, 2);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("R");
+                    temp.state[0][0] = currentState.state[0][1];
+                    temp.state[0][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("D");
+                    temp.state[0][0] = currentState.state[1][0];
+                    temp.state[1][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Top Left Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+
+            } //
+            //top right corner
+            else if (blank == 13) {
+
+                //System.out.println("Top Right Corner ");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 2) {
+                    depthCounter(currentState, 2);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("L");
+                    temp.state[0][2] = currentState.state[0][1];
+                    temp.state[0][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("D");
+                    temp.state[0][2] = currentState.state[1][2];
+                    temp.state[1][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Top Right Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            }// 
+            //bottom left corner
+            else if (blank == 31) {
+
+                //System.out.println("Bottom Left Corner");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 2) {
+                    depthCounter(currentState, 2);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("R");
+                    temp.state[2][0] = currentState.state[2][1];
+                    temp.state[2][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("U");
+                    temp.state[2][0] = currentState.state[1][0];
+                    temp.state[1][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Bottom Left Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            }// 
+            //bottom right corner
+            else if (blank == 33) {
+
+                //System.out.println("Bottom Right Corner");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 2) {
+                    depthCounter(currentState, 2);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("L");
+                    temp.state[2][2] = currentState.state[2][1];
+                    temp.state[2][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("U");
+                    temp.state[2][2] = currentState.state[1][2];
+                    temp.state[1][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Bottom Right Corner NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            } //Sides-------------------------------------------------------------------------------------------------------------
+            //
+            // left side
+            else if (blank == 21) {
+
+                //System.out.println("Left Side");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 3) {
+                    depthCounter(currentState, 3);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("U");
+                    temp.state[1][0] = currentState.state[0][0];
+                    temp.state[0][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("D");
+                    temp.state[1][0] = currentState.state[2][0];
+                    temp.state[2][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 2) {
+                    temp.setMove("R");
+                    temp.state[1][0] = currentState.state[1][1];
+                    temp.state[1][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Left Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            } //
+            // right side
+            else if (blank == 23) {
+
+                //System.out.println("Right Side");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 3) {
+                    depthCounter(currentState, 3);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("U");
+                    temp.state[1][2] = currentState.state[0][2];
+                    temp.state[0][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("D");
+                    temp.state[1][2] = currentState.state[2][2];
+                    temp.state[2][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 2) {
+                    temp.setMove("L");
+                    temp.state[1][2] = currentState.state[1][1];
+                    temp.state[1][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Right Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            }//
+            // top side
+            else if (blank == 12) {
+
+                //System.out.println("Top Side");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 3) {
+                    depthCounter(currentState, 3);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("D");
+                    temp.state[0][1] = currentState.state[1][1];
+                    temp.state[1][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("L");
+                    temp.state[0][1] = currentState.state[0][0];
+                    temp.state[0][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 2) {
+                    temp.setMove("R");
+                    temp.state[0][1] = currentState.state[0][2];
+                    temp.state[0][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Top Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            } //
+            // bottom side
+            else if (blank == 32) {
+
+                //System.out.println("Bottom Side");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 3) {
+                    depthCounter(currentState, 3);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("U");
+                    temp.state[2][1] = currentState.state[1][1];
+                    temp.state[1][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("L");
+                    temp.state[2][1] = currentState.state[2][0];
+                    temp.state[2][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 2) {
+                    temp.setMove("R");
+                    temp.state[2][1] = currentState.state[2][2];
+                    temp.state[2][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Bottom Side NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+            } //Center-------------------------------------------------------------------------------------------------------------
+            else if (blank == 22) {
+
+                //System.out.println("Center");
+                currentState.printNode();
+
+                if (currentState.getChildren() == 4) {
+                    depthCounter(currentState, 4);
+                } else if (currentState.getChildren() == 0) {
+                    temp.setMove("U");
+                    temp.state[1][1] = currentState.state[0][1];
+                    temp.state[0][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 1) {
+                    temp.setMove("D");
+                    temp.state[1][1] = currentState.state[2][1];
+                    temp.state[2][1] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 2) {
+                    temp.setMove("L");
+                    temp.state[1][1] = currentState.state[1][0];
+                    temp.state[1][0] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else if (currentState.getChildren() == 3) {
+                    temp.setMove("R");
+                    temp.state[1][1] = currentState.state[1][2];
+                    temp.state[1][2] = v_;
+                    theTree.add(temp);
+                    currentState.addChild();
+                    temp.printNode();
+                    solver(currentState, blankLocation(currentState));
+                } else {
+                    System.out.println("Center NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                }
+
+            } //
+            //
+            //
+            //
+            //
+            //
+            //
+            //
+            //something went wrong
+            else {
+                System.out.println("NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            }
+        } //System.out.println("Wrong");
+        else {
+
+            endGame(currentState);
+            //System.out.println("Right");
+            //currentState.printNode();
+            //endState.printNode();
+
+        }
+        //System.out.println("End");
+    }
+}
