@@ -16,7 +16,7 @@ public class Puzzel {
     char v7 = '7';
     char v8 = '8';
     char v_ = '_';
-    Node startState = new Node(v7, v8, v6, v5, v_, v3, v2, v4, v1, null, 0, base, 0);
+    Node startState = new Node(v5, v8, v6, v7, v_, v3, v2, v4, v1, null, 0, base, 0);
     Node endState = new Node(v1, v2, v3, v4, v5, v6, v7, v8, v_, null, 0, base, 0);
 
     public Puzzel() {
@@ -163,16 +163,19 @@ public class Puzzel {
                     || ((currentState.theUpEX() == false) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == false) && (currentState.theRightEX() == true))
                     || ((currentState.theUpEX() == true) && (currentState.theDownEX() == false) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == false))
                     || ((currentState.theUpEX() == true) && (currentState.theDownEX() == false) && (currentState.theLeftEX() == false) && (currentState.theRightEX() == true)))) {
-                System.out.println("2 children");
+                currentState.finishedWithKids();
+                //System.out.println("2 children");
 
             } else if ((currentState.getChildren() == 3) && (((currentState.theUpEX() == false) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == true))
                     || ((currentState.theUpEX() == true) && (currentState.theDownEX() == false) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == true))
                     || ((currentState.theUpEX() == true) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == false) && (currentState.theRightEX() == true))
                     || ((currentState.theUpEX() == true) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == false)))) {
-                System.out.println("3 children");
+                currentState.finishedWithKids();
+                //System.out.println("3 children");
             } else if ((currentState.getChildren() == 4) && (((currentState.theUpEX() == true) && (currentState.theDownEX() == true) && (currentState.theLeftEX() == true) && (currentState.theRightEX() == true)))) {
-                System.out.println("4 children");
-
+                currentState.finishedWithKids();
+                //System.out.println("4 children");
+                
             } else if ((currentState.theUpEX()) && (currentState.getChildren() == 0)) {
                 int originalv = startState.getblankLoc();
                 int modv = originalv % 10;
