@@ -12,6 +12,7 @@ public class Node {
     boolean leftex;
     boolean upex;
     boolean downex;
+    boolean allChildren;
 
     /**
      * creates the node
@@ -54,6 +55,7 @@ public class Node {
         leftex = false;
         upex = false;
         downex = false;
+        allChildren=false;
 
         char v_ = '_';
         blankLocation = 11;
@@ -143,6 +145,21 @@ public class Node {
      */
     public boolean theDownEX(){
         return downex;
+    }
+    
+    /**
+     * sets all children to true, the node has completed making its children
+     */
+    public void finishedWithKids(){
+        allChildren=true;
+    }
+    
+     /**
+     * returns true the node has all its children
+     * @return 
+     */
+    public boolean hasAllChildren(){
+        return allChildren;
     }
     
     /**
