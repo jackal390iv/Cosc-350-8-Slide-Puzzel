@@ -5,8 +5,10 @@ import java.util.Scanner;
 public class Puzzel {
 
     int treeSize = 0;
+    boolean val = true;
     int childrens = 0;
     ArrayList<Node> theTree = new ArrayList<Node>();
+    ArrayList<Node> theSolution = new ArrayList<Node>();
     String base = "";
     char v1 = '1';
     char v2 = '2';
@@ -17,8 +19,8 @@ public class Puzzel {
     char v7 = '7';
     char v8 = '8';
     char v_ = '_';
-    Node startState = new Node(v5, v8, v6, v7, v_, v3, v2, v4, v1, null);
-    Node endState = new Node(v1, v2, v3, v4, v5, v6, v7, v8, v_, null);
+    Node startState = new Node(v1, v2, v3, v4, v5, v6, v7, v8, v_, null);
+    Node endState = new Node(v1, v2, v3, v4, v_, v6, v7, v5, v8, null);
 
     public Puzzel() {
     }
@@ -119,26 +121,96 @@ public class Puzzel {
      * @return 
      */
     public boolean endChecker(Node currentState) {
-        boolean checker = false;
+        val=false;
         if ((currentState.state[0][0] == endState.state[0][0]) && (currentState.state[0][1] == endState.state[0][1]) && (currentState.state[0][2] == endState.state[0][2])
                 && (currentState.state[1][0] == endState.state[1][0]) && (currentState.state[1][1] == endState.state[1][1]) && (currentState.state[1][2] == endState.state[1][2])
                 && (currentState.state[2][0] == endState.state[2][0]) && (currentState.state[2][1] == endState.state[2][1]) && (currentState.state[2][2] == endState.state[2][2])) {
-            checker = false;
+            val = true;
+            
         }
-        return checker;
+        return val;
     }
 
     /**
      * checks to see if the current node is equivalent to the start state that the user specified 
      * @param currentState 
      */
-    public void startChecker(Node currentState) {
-        currentState.printNode();
-        if (!((currentState.state[0][0] == startState.state[0][0]) && (currentState.state[0][1] == startState.state[0][1]) && (currentState.state[0][2] == startState.state[0][2])
-                && (currentState.state[1][0] == startState.state[1][0]) && (currentState.state[1][1] == startState.state[1][1]) && (currentState.state[1][2] == startState.state[1][2])
-                && (currentState.state[2][0] == startState.state[2][0]) && (currentState.state[2][1] == startState.state[2][1]) && (currentState.state[2][2] == startState.state[2][2]))) {
-            startChecker(currentState.getParent());
+    public boolean notInTree(Node currentState, int loc) {
+        val=true;
+        if (loc < theTree.size()) {
+            if (!((currentState.state[0][0] == theTree.get(loc).state[0][0]) && (currentState.state[0][1] == theTree.get(loc).state[0][1]) && (currentState.state[0][2] == theTree.get(loc).state[0][2])
+                    && (currentState.state[1][0] == theTree.get(loc).state[1][0]) && (currentState.state[1][1] == theTree.get(loc).state[1][1]) && (currentState.state[1][2] == theTree.get(loc).state[1][2])
+                    && (currentState.state[2][0] == theTree.get(loc).state[2][0]) && (currentState.state[2][1] == theTree.get(loc).state[2][1]) && (currentState.state[2][2] == theTree.get(loc).state[2][2]))) {
+                notInTree(currentState, loc + 1);
+            } else {                
+                val = false;
+            }
         }
+        return val;
+    }
+
+    /**
+     * prints the search tree
+     * @param loc 
+     */
+    public void printTheTree(int loc) {
+        if (loc < theTree.size()) {
+            theTree.get(loc).printNode();
+            printTheTree(loc + 1);
+        }
+    }
+
+    /**
+     * returns how many real children the node has
+     * @param currentState
+     * @return 
+     */
+    public int numberOfRealKids(Node currentState) {
+        int kids = 0;
+        if (currentState.getFirstChild() != null) {
+            kids++;
+        }
+        if (currentState.getSecondChild() != null) {
+            kids++;
+        }
+        if (currentState.getThirdChild() != null) {
+            kids++;
+        }
+        if (currentState.getFourthChild() != null) {
+            kids++;
+        }
+        return kids;
+    }
+
+    /**
+     * compares node children
+     * @param currentState
+     * @param cha
+     * @return 
+     */
+    public boolean compareChildren(Node currentState, String cha) {
+        boolean valid = true;
+        if (currentState.getFirstChild() != null) {
+            if (currentState.getFirstChild().getMove().endsWith(cha)) {
+                valid = false;
+            }
+        }
+        if (currentState.getSecondChild() != null) {
+            if (currentState.getSecondChild().getMove().endsWith(cha)) {
+                valid = false;
+            }
+        }
+        if (currentState.getThirdChild() != null) {
+            if (currentState.getThirdChild().getMove().endsWith(cha)) {
+                valid = false;
+            }
+        }
+        if (currentState.getFourthChild() != null) {
+            if (currentState.getFourthChild().getMove().endsWith(cha)) {
+                valid = false;
+            }
+        }
+        return valid;
     }
 
     /**
@@ -150,14 +222,22 @@ public class Puzzel {
     }
 
     public void workingTree() {
-        System.out.println("NEW Child #################################################");
-        solver(theTree.get(treeSize));
+        if(treeSize<theTree.size()){
+        solver(theTree.get(treeSize));}
+        else{
+            System.out.println("Sequence Not Found, soulution imposible");
+            //printTheTree(0);
+        }
     }
 
+    /**
+     * searches the puzzel
+     * @param currentState 
+     */
     public void solver(Node currentState) {
 
         //System.out.println("NEW LOOP: ");
-        currentState.printNode();
+        //currentState.printNode();
         currentState.findBlank();
         currentState.setBlankLoc();
 
@@ -189,7 +269,7 @@ public class Puzzel {
                 //System.out.println("4 children");
                 treeSize++;
                 workingTree();
-            } else if ((currentState.theUpEX()) && ((currentState.getChildren() == 0))) {
+            } else if ((currentState.theUpEX()) && (compareChildren(currentState, "U")) == true) {
                 int originalv = currentState.getblankLoc();
                 int modv = originalv % 10;
                 int secondv = modv - 1;
@@ -199,18 +279,18 @@ public class Puzzel {
                 temp.state[firstv][secondv] = currentState.state[firstv - 1][secondv];
                 temp.state[firstv - 1][secondv] = currentState.state[firstv][secondv];
                 temp.childNumChange(currentState.getChildren() + 1);
-                theTree.add(temp);
                 currentState.addChild();
-                if (endChecker(temp) == true) {
-                    solver(temp);
-                }
-                temp.printNode();
+                val = true;
+                if (notInTree(temp, 0) == true) {
+                    currentState.settingChildren(temp);
+                    theTree.add(temp);
+                    if (endChecker(temp) == true) {
+                        solver(temp);
+                    }
+                    //temp.printNode();
+                }                
                 solver(currentState);
-            } else if (((currentState.theDownEX()) && (((currentState.getChildren() == 0))
-                    || ((currentState.getChildren() == 1) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("D")))))))) {
-
-
-
+            } else if ((currentState.theDownEX()) && (compareChildren(currentState, "D") == true)) {
                 int originalv = currentState.getblankLoc();
                 int modv = originalv % 10;
                 int secondv = modv - 1;
@@ -220,17 +300,18 @@ public class Puzzel {
                 temp.state[firstv][secondv] = currentState.state[firstv + 1][secondv];
                 temp.state[firstv + 1][secondv] = currentState.state[firstv][secondv];
                 temp.childNumChange(currentState.getChildren() + 1);
-
-                theTree.add(temp);
                 currentState.addChild();
-                if (endChecker(temp) == true) {
-                    solver(temp);
+                val = true;
+                if (notInTree(temp, 0) == true) {
+                    currentState.settingChildren(temp);
+                    theTree.add(temp);
+                    if (endChecker(temp) == true) {
+                        solver(temp);
+                    }
+                    //temp.printNode();
                 }
-                temp.printNode();
                 solver(currentState);
-            } else if (((currentState.theLeftEX()) && (((currentState.getChildren() == 1) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("L")))))
-                    || ((currentState.getChildren() == 2) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("L")))) && (!((theTree.get(theTree.size() - 2).getMove().endsWith("L")))))))) {
-
+            } else if ((currentState.theLeftEX()) && (compareChildren(currentState, "L")) == true) {
 
                 int originalv = currentState.getblankLoc();
                 int modv = originalv % 10;
@@ -241,18 +322,18 @@ public class Puzzel {
                 temp.state[firstv][secondv] = currentState.state[firstv][secondv - 1];
                 temp.state[firstv][secondv - 1] = currentState.state[firstv][secondv];
                 temp.childNumChange(currentState.getChildren() + 1);
-
-                theTree.add(temp);
                 currentState.addChild();
-                if (endChecker(temp) == true) {
-                    solver(temp);
+                val = true;
+                if (notInTree(temp, 0) == true) {
+                    currentState.settingChildren(temp);
+                    theTree.add(temp);
+                    if (endChecker(temp) == true) {
+                        solver(temp);
+                    }
+                    //temp.printNode();
                 }
-                temp.printNode();
                 solver(currentState);
-            } else if (((currentState.theRightEX()) && (((currentState.getChildren() == 1) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("R")))))
-                    || ((currentState.getChildren() == 2) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("R")))) && (!((theTree.get(theTree.size() - 2).getMove().endsWith("R")))))
-                    || ((currentState.getChildren() == 3) && (!((theTree.get(theTree.size() - 1).getMove().endsWith("R")))) && (!((theTree.get(theTree.size() - 2).getMove().endsWith("R")))) && (!((theTree.get(theTree.size() - 3).getMove().endsWith("R")))))))) {
-
+            } else if ((currentState.theRightEX()) && (compareChildren(currentState, "R")) == true) {
                 int originalv = currentState.getblankLoc();
                 int modv = originalv % 10;
                 int secondv = modv - 1;
@@ -262,33 +343,52 @@ public class Puzzel {
                 temp.state[firstv][secondv] = currentState.state[firstv][secondv + 1];
                 temp.state[firstv][secondv + 1] = currentState.state[firstv][secondv];
                 temp.childNumChange(currentState.getChildren() + 1);
-                temp.findBlank();
-                temp.setBlankLoc();
-                theTree.add(temp);
                 currentState.addChild();
-                if (endChecker(temp) == true) {
-                    solver(temp);
+                val = true;
+                if (notInTree(temp, 0) == true) {
+                    currentState.settingChildren(temp);
+                    theTree.add(temp);
+                    if (endChecker(temp) == true) {
+                        solver(temp);
+                    }
+                    //temp.printNode();
                 }
-                temp.printNode();
                 solver(currentState);
             } else {
+                
                 System.out.println("NOPE$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                printTheTree(0);
             }
 
         } else {
-            //endGame(currentState);
-            System.out.println("Right%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            currentState.printNode();
-            endState.printNode();
+            endGame(currentState);            
         }
     }
 
+    /**
+     * after thew end state is found this method prints the direct solution and the varbose solution
+     * @param currentState 
+     */
     public void endGame(Node currentState) {
-        System.out.println("How The Puzzel can be solved in the fewest moves, from solution to starting point: ");
-        startChecker(currentState);
-        System.out.println("However Walking through our search varbosly we get: ");
-        do {
-            theTree.remove(0).printNode();
-        } while (!(theTree.isEmpty()));
+        System.out.println("Solution Found!");
+        currentState.printNode();
+        System.out.println("To directly solve this puzzel you should make the following moves (Warning: the parent to child conection is having issues..): ");
+        setSolution(currentState);
+        for(int i=theSolution.size()-1; i<0;i--){
+            theSolution.get(i).printNode();
+        }
+        System.out.println("However if you would like to see how the code searches: ");
+        printTheTree(0);
+    }
+    
+    /**
+     * this method puts the dirrect solution into an arraylist
+     * @param currentState 
+     */
+    public void setSolution(Node currentState){
+        theSolution.add(currentState);
+        if(currentState.getParent()!=null){
+            setSolution(currentState.getParent());
+        }
     }
 }
