@@ -4,7 +4,7 @@ public class Node {
     char[][] state = new char[3][3];
     int depth;
     Node parent;
-    String move="Move: ";
+    String move = "Move: ";
     int childNumber;
     int blankLocation;
     boolean rightex;
@@ -13,11 +13,11 @@ public class Node {
     boolean downex;
     boolean allChildren;
     int children;
-    
-    Node firstChild;
-    Node secondChild;    
-    Node thirdhild;
-    Node fourthChild;
+    Node firstChild = null;
+    Node secondChild = null;
+    Node thirdChild = null;
+    Node fourthChild = null;
+
     /**
      * creates the node
      * @param row1col1
@@ -50,20 +50,13 @@ public class Node {
         state[2][1] = row3col2;
         state[2][2] = row3col3;
 
-        //parent = p;
-        //childNumber = 0;
-        //children=0;
-                //depth=0;
-        //rightex = false;
-        //leftex = false;
-        //upex = false;
-        //downex = false;
-        //allChildren=false;
-
     }
-    
-    public void findBlank(){
-          char v_ = '_';
+
+    /**
+     * this method finds the nodes blank spot
+     */
+    public void findBlank() {
+        char v_ = '_';
         blankLocation = 11;
         if (this.state[0][1] == v_) {
             blankLocation = 12;
@@ -86,7 +79,10 @@ public class Node {
         }
     }
 
-    public void setBlankLoc(){
+    /**
+     * this method sets a value to the nodes blank spot
+     */
+    public void setBlankLoc() {
         if (blankLocation == 11) {
             downex = true;
             rightex = true;
@@ -122,54 +118,134 @@ public class Node {
             leftex = true;
         }
     }
-    
+
+    /**
+     * this method places the nodes children in their proper place
+     * @param c 
+     */
+    public void settingChildren(Node c) {
+        if (children == 1) {
+            setFirstChild(c);
+        } else if (children == 2) {
+            setSecondChild(c);
+        } else if (children == 3) {
+            setThirdChild(c);
+        } else if (children == 4) {
+            setFourthChild(c);
+        }
+    }
+
+    /**
+     * this methos sets a node as the first child
+     * @param c 
+     */
+    public void setFirstChild(Node c) {
+        firstChild = c;
+    }
+
+    /**
+     * this methos sets a node as the second child
+     * @param c 
+     */
+    public void setSecondChild(Node c) {
+        secondChild = c;
+    }
+
+    /**
+     * this methos sets a node as the third child
+     * @param c 
+     */
+    public void setThirdChild(Node c) {
+        thirdChild = c;
+    }
+
+    /**
+     * this methos sets a node as the fourth child
+     * @param c 
+     */
+    public void setFourthChild(Node c) {
+        fourthChild = c;
+    }
+
+    /**
+     * this method returns the nodes first child
+     * @return 
+     */
+    public Node getFirstChild() {
+        return firstChild;
+    }
+
+     /**
+     * this method returns the nodes second child
+     * @return 
+     */
+    public Node getSecondChild() {
+        return secondChild;
+    }
+
+     /**
+     * this method returns the nodes third child
+     * @return 
+     */
+    public Node getThirdChild() {
+        return thirdChild;
+    }
+
+     /**
+     * this method returns the nodes fourth child
+     * @return 
+     */
+    public Node getFourthChild() {
+        return fourthChild;
+    }
+
     /**
      * returns true if a right move is possible
      * @return 
      */
-    public boolean theRightEX(){
+    public boolean theRightEX() {
         return rightex;
     }
-    
+
     /**
      * returns true if a left move is possible
      * @return 
      */
-    public boolean theLeftEX(){
+    public boolean theLeftEX() {
         return leftex;
     }
-    
+
     /**
      * returns true if a up move is possible
      * @return 
      */
-    public boolean theUpEX(){
+    public boolean theUpEX() {
         return upex;
     }
-    
+
     /**
      * returns true if a down move is possible
      * @return 
      */
-    public boolean theDownEX(){
+    public boolean theDownEX() {
         return downex;
     }
-    
+
     /**
      * sets all children to true, the node has completed making its children
      */
-    public void finishedWithKids(){
-        allChildren=true;
+    public void finishedWithKids() {
+        allChildren = true;
     }
-    
-     /**
+
+    /**
      * returns true the node has all its children
      * @return 
      */
-    public boolean hasAllChildren(){
+    public boolean hasAllChildren() {
         return allChildren;
     }
-    
+
     /**
      * returns the location of the blank space
      * @return 
@@ -237,9 +313,10 @@ public class Node {
      * adds to the node string 
      * @param d 
      */
-    public void setMove(String parentMove,String childMove) {
-        move=parentMove+childMove;
+    public void setMove(String parentMove, String childMove) {
+        move = parentMove + childMove;
     }
+
     /**
      * returns the depth
      * @return 
@@ -252,7 +329,7 @@ public class Node {
      * increments the depth
      */
     public void incrementDepth(int d) {
-        depth=d;
+        depth = d;
     }
 
     /**
@@ -272,10 +349,10 @@ public class Node {
         System.out.println("\n");
 
 
-        System.out.println("Node Depth: " + depth);        
+        System.out.println("Node Depth: " + depth);
         System.out.println("Node " + move);
-        System.out.println("Node Number of Children: " + children);
-        System.out.println("Current Node Child Number: " + childNumber);
+        //System.out.println("Node Number of Children: " + children);
+        //System.out.println("Current Node Child Number: " + childNumber);
         System.out.println("-------------------------" + "\n");
     }
 }
