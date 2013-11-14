@@ -3,9 +3,13 @@ public class Tester {
 	public static void main(String[] args) {
 		Puzzel puzzel = new Puzzel();
 		
-                //puzzel.startEndState();
-
+                System.out.println("Here is an example of how this program is suppost to work, when it does work...");
+                
                 puzzel.testing();
+                
+                System.out.println("Now you try (Warning: something is wrong in my code, this only seems to work out every other time...)");
+                
+                puzzel.startEndState();
                 
 	}
 }
